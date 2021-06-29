@@ -1,9 +1,12 @@
 const express = require('express');
+const bcrypt = require('bcrypt-nodejs');
+const cors = require('cors');
 
 const app = express();
 
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
+app.use(cors());
 
 // Dummy database set up before adding an actual one
 const database = {
@@ -20,9 +23,16 @@ const database = {
             id: '124',
             name: 'sally',
             email: 'sally@gmail.com',
-            password: 'apple',
+            password: 'apples',
             entries: 0,
             joined: new Date()
+        }
+    ],
+    login: [
+        {
+            id: '987',
+            hash: '',
+            email: 'john@gmail.com'
         }
     ]
 }
@@ -41,6 +51,11 @@ app.post('/signin', (req, res) => {
 
 app.post('/register', (req, res) => {
     const { email, name, password } = req.body;
+
+    bcrypt.hash(password, null, null, function(err, hash) {
+        console.log(hash);
+    });
+
     database.users.push(
         {
             id: '125',
@@ -82,6 +97,8 @@ app.put('/image', (req, res) => {
         res.status(400).json('not found');
     } 
 });
+
+
 
 app.listen(3000, () => {
     console.log('app is running on port 3000');
